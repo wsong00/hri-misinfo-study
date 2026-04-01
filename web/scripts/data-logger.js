@@ -18,7 +18,7 @@ function buildSessionData() {
   };
 }
 
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzu_ASzovgu2Lq3aXTGgKd7WvmUMq9sp6bHdPaW-LBnmsUhxO3D35sqi94C_wfH4QHs6Q/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyfksO5QqHKD9t54PyY2IdesX669y2tUg3ZYYzE-5RU3NWOfT9qelPUaHQdENu-VNU9wQ/exec';
 
 function postToSheet() {
   const data = buildSessionData();
