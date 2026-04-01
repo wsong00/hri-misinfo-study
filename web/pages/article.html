@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>News Article — Desert Survival Study</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+  <style>
+    /* Slightly wider card for article readability */
+    .card.article-card {
+      max-width: 760px;
+      padding: 40px 48px;
+    }
+
+    @media (max-width: 600px) {
+      .card.article-card {
+        padding: 24px 20px;
+      }
+      .news-headline {
+        font-size: 22px;
+      }
+    }
+
+    /* Reading time indicator */
+    .reading-note {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    /* Continue button section */
+    .article-continue {
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+      text-align: center;
+    }
+
+    .article-continue p {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Fallback message if no session data */
+    .no-session-warning {
+      background: #fff3e0;
+      border: 1px solid #ffb74d;
+      border-radius: 6px;
+      padding: 16px 20px;
+      font-size: 14px;
+      color: #7a4100;
+      margin-bottom: 24px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <header class="study-header">
+      <span class="study-title">Desert Survival Study</span>
+      <span class="participant-id" id="pid-display"></span>
+    </header>
+
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: 55%"></div>
+    </div>
+
+    <div class="card article-card">
+      <p class="reading-note">Please read the following article carefully before continuing.</p>
+
+      <div class="no-session-warning" id="session-warning">
+        Note: No session data found. The article will be shown with a default ranking.
+        Please ensure you started the session from the experimenter panel.
+      </div>
+
+      <!-- Article renders here -->
+      <div class="news-wrapper" id="article-container"></div>
+
+      <div class="article-continue">
+        <p>When you have finished reading, click below to continue.</p>
+        <button class="btn btn-primary" id="continue-btn">
+          Continue to Re-Ranking
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../scripts/ranking.js"></script>
+  <script src="../scripts/article-generator.js"></script>
+  <script>
+    // Show participant ID
+    const pid = Session.get('participantId');
+    if (pid) document.getElementById('pid-display').textContent = 'Participant: ' + pid;
+
+    // Load initial ranking from session, fall back to default order
+    let initialRanking = Session.get('initialRanking');
+    if (!initialRanking || !Array.isArray(initialRanking) || initialRanking.length !== 5) {
+      initialRanking = ['Water', 'Knife', 'Mirror', 'Rope', 'Flashlight'];
+      document.getElementById('session-warning').style.display = 'block';
+    }
+
+    // Render the article
+    renderArticle('article-container', initialRanking);
+
+    // Continue button
+    document.getElementById('continue-btn').addEventListener('click', () => {
+      Session.set('articleShownTimestamp', new Date().toISOString());
+      window.location.href = 'ranking-post.html';
+    });
+  </script>
+</body>
+</html>

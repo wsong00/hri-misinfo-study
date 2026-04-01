@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desert Survival Task</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
+<div class="page">
+  <div class="study-header">
+    <span class="study-label">Desert Survival Study</span>
+    <span class="pid-label" id="pid-display"></span>
+  </div>
+
+  <div class="card">
+    <div class="placeholder-box">
+      [PLACEHOLDER] Desert survival scenario text will go here.
+    </div>
+    <button class="btn btn-primary" onclick="window.location.href='ranking-initial.html'">Continue</button>
+  </div>
+</div>
+
+<script src="../scripts/session.js"></script>
+<script>
+  requireSession('participantId');
+  showPID();
+</script>
+</body>
+</html>

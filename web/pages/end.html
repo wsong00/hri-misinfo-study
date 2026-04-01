@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thank You — Desert Survival Study</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
+<div class="page">
+  <div class="card" style="text-align:center;">
+    <div class="end-icon">✅</div>
+    <h1 class="end-title">Thank you for participating!</h1>
+    <p class="end-sub">Please let the researcher know you're finished.</p>
+  </div>
+</div>
+
+<script src="../scripts/session.js"></script>
+<script src="../scripts/data-logger.js"></script>
+<script>
+  requireSession('participantId', 'initialChoice', 'postChoice');
+
+  window.addEventListener('load', () => {
+    setTimeout(postToSheet, 600);
+  });
+</script>
+</body>
+</html>
