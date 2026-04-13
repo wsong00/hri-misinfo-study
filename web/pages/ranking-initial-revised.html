@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Choice — Desert Survival Study</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
+<div class="page">
+  <div class="study-header">
+    <span class="study-label">Desert Survival Study</span>
+    <span class="pid-label" id="pid-display"></span>
+  </div>
+
+  <div class="card">
+    <h1>Which item do you think is more important for surviving in the desert?</h1>
+    <p class="subtitle">Select one option below, then click Submit.</p>
+
+  <div class="choice-grid">
+    <div class="choice-card" id="card-A" onclick="selectOption('knife')">
+      <span class="choice-label">Option A</span>
+      <span class="choice-name">Survival Knife</span>
+      <span class="choice-check">✓</span>
+  </div>
+    <div class="choice-card" id="card-B" onclick="selectOption('mirror')">
+      <span class="choice-label">Option B</span>
+      <span class="choice-name">High-Reflectivity Signal Mirror</span>
+      <span class="choice-check">✓</span>
+    </div>
+  </div>
+
+    <button class="btn btn-primary" id="submit-btn" disabled onclick="submitChoice()">Submit</button>
+  </div>
+</div>
+
+<script src="../scripts/session.js"></script>
+<script>
+  requireSession('participantId');
+  showPID();
+
+  let selected = null;
+
+  function selectOption(opt) {
+    selected = opt;
+    document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+    const cardId = opt === 'knife' ? 'card-A' : 'card-B';
+    document.getElementById(cardId).classList.add('selected');
+    document.getElementById('submit-btn').disabled = false;
+  }
+
+  function submitChoice() {
+    if (!selected) return;
+    Session.set('initialChoice', selected); 
+    window.location.href = 'ella-interlude.html';
+  }
+</script>
+</body>
+</html>

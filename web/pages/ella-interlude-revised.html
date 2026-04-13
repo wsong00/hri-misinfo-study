@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ella — Desert Survival Study</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+  <!-- roslib for ROS2 communication -->
+  <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+</head>
+<body>
+<div class="page ella-page">
+  <div class="ella-card">
+
+    <div class="ella-icon">
+      <div class="ella-ring"></div>
+      <div class="ella-ring"></div>
+      <div class="ella-ring"></div>
+      <div class="ella-avatar">🤖</div>
+    </div>
+
+    <h1 class="ella-title">Ella has some thoughts!</h1>
+    <p class="ella-sub">Please listen to what Ella has to say.<br>Take your time — there's no rush.</p>
+
+    <div class="ella-dots">
+      <div class="ella-dot"></div>
+      <div class="ella-dot"></div>
+      <div class="ella-dot"></div>
+    </div>
+
+    <button class="btn btn-primary" onclick="window.location.href='ranking-post.html'" style="max-width:320px; margin:0 auto;">
+      Continue
+    </button>
+
+    <p class="experimenter-note">[Experimenter: click Continue once Ella has finished speaking]</p>
+  </div>
+</div>
+
+<script src="../scripts/session.js"></script>
+<script>
+  requireSession('participantId', 'initialChoice');
+
+  const choice = Session.get('initialChoice'); 
+  console.log('Participant chose:', choice);
+
+  const ros = new ROSLIB.Ros({ url: 'ws://localhost:9090' });
+
+  ros.on('connection', () => {
+    console.log('Connected to ROS2, sending choice:', choice);
+
+    const topic = new ROSLIB.Topic({
+      ros: ros,
+      name: '/participant_choice',
+      messageType: 'std_msgs/msg/String'
+    });
+
+    topic.publish(new ROSLIB.Message({ data: choice }));
+    console.log('Choice published to /participant_choice');
+  });
+
+  ros.on('error', (e) => {
+    console.error('ROS connection error:', e);
+  });
+</script>
+</body>
+</html>
