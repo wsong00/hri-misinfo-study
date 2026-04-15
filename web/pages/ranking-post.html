@@ -18,14 +18,14 @@
     <p class="subtitle">You may choose the same item or change your answer.</p>
 
     <div class="choice-grid">
-      <div class="choice-card" id="card-A" onclick="selectOption('A')">
+      <div class="choice-card" id="card-A" onclick="selectOption('knife')">
         <span class="choice-label">Option A</span>
-        <span class="choice-name">Option A</span>
+        <span class="choice-name">Survival Knife</span>
         <span class="choice-check">✓</span>
       </div>
-      <div class="choice-card" id="card-B" onclick="selectOption('B')">
+      <div class="choice-card" id="card-B" onclick="selectOption('mirror')">
         <span class="choice-label">Option B</span>
-        <span class="choice-name">Option B</span>
+        <span class="choice-name">High-Reflectivity Signal Mirror</span>
         <span class="choice-check">✓</span>
       </div>
     </div>
@@ -44,7 +44,8 @@
   function selectOption(opt) {
     selected = opt;
     document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
-    document.getElementById('card-' + opt).classList.add('selected');
+    const cardId = opt === 'knife' ? 'card-A' : 'card-B';
+    document.getElementById(cardId).classList.add('selected');
     document.getElementById('submit-btn').disabled = false;
   }
 

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ella — Desert Survival Study</title>
   <link rel="stylesheet" href="../styles/main.css" />
+  <!-- roslib for ROS2 communication -->
+  <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
 </head>
 <body>
 <div class="page ella-page">
@@ -37,6 +39,28 @@
 <script src="../scripts/session.js"></script>
 <script>
   requireSession('participantId', 'initialChoice');
+
+  const choice = Session.get('initialChoice'); 
+  console.log('Participant chose:', choice);
+
+  const ros = new ROSLIB.Ros({ url: 'ws://localhost:9090' });
+
+  ros.on('connection', () => {
+    console.log('Connected to ROS2, sending choice:', choice);
+
+    const topic = new ROSLIB.Topic({
+      ros: ros,
+      name: '/participant_choice',
+      messageType: 'std_msgs/msg/String'
+    });
+
+    topic.publish(new ROSLIB.Message({ data: choice }));
+    console.log('Choice published to /participant_choice');
+  });
+
+  ros.on('error', (e) => {
+    console.error('ROS connection error:', e);
+  });
 </script>
 </body>
 </html>
