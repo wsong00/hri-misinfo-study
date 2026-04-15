@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ella — Desert Survival Study</title>
   <link rel="stylesheet" href="../styles/main.css" />
-  <!-- roslib for ROS2 communication -->
   <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
 </head>
 <body>
@@ -21,26 +20,28 @@
 
     <h1 class="ella-title">Ella has some thoughts!</h1>
 
-    <!-- Step 1: Ready -->
+    <!-- Step 1: before ready -->
     <div id="step-ready">
       <p class="ella-sub">When you're ready to hear Ella's thoughts, press the button below.</p>
-      <button class="btn btn-primary" id="ready-btn" onclick="onReady()" style="max-width:320px; margin:0 auto;">
+      <button class="btn btn-primary" onclick="onReady()" style="max-width:320px; margin:0 auto;">
         I'm Ready
       </button>
     </div>
 
     <!-- Step 2: Ella speaking -->
     <div id="step-speaking" style="display:none;">
-      <p class="ella-sub">Please listen to what Ella has to say.<br>Take your time — there's no rush.</p>
+      <p class="ella-sub">Look at Ella.<br>Continue when you've heard her opinions.</p>
       <div class="ella-dots">
         <div class="ella-dot"></div>
         <div class="ella-dot"></div>
         <div class="ella-dot"></div>
       </div>
-      <button class="btn btn-primary" onclick="window.location.href='ranking-post.html'" style="max-width:320px; margin:0 auto;">
+      <button class="btn btn-primary" onclick="window.location.href='ranking-post.html'" style="max-width:320px; margin:0 auto; margin-bottom:12px;">
         Continue
       </button>
-      <p class="experimenter-note">[Experimenter: click Continue once Ella has finished speaking]</p>
+      <button class="btn" onclick="hearAgain()" style="max-width:320px; margin:0 auto; background:#F3F4F6; color:#374151; font-size:14px;">
+        🔁 Hear Again
+      </button>
     </div>
 
   </div>
@@ -52,14 +53,8 @@
 
   const choice = Session.get('initialChoice');
 
-  function onReady() {
-    // Swap to speaking view
-    document.getElementById('step-ready').style.display = 'none';
-    document.getElementById('step-speaking').style.display = 'block';
-
-    // Publish choice to ROS2 → triggers Ella's TTS
+  function publishChoice() {
     const ros = new ROSLIB.Ros({ url: 'ws://localhost:9090' });
-
     ros.on('connection', () => {
       const topic = new ROSLIB.Topic({
         ros: ros,
@@ -67,12 +62,19 @@
         messageType: 'std_msgs/msg/String'
       });
       topic.publish(new ROSLIB.Message({ data: choice }));
-      console.log('Choice published to /participant_choice:', choice);
+      console.log('Published to /participant_choice:', choice);
     });
+    ros.on('error', (e) => console.error('ROS error:', e));
+  }
 
-    ros.on('error', (e) => {
-      console.error('ROS connection error:', e);
-    });
+  function onReady() {
+    document.getElementById('step-ready').style.display = 'none';
+    document.getElementById('step-speaking').style.display = 'block';
+    publishChoice();
+  }
+
+  function hearAgain() {
+    publishChoice();
   }
 </script>
 </body>
