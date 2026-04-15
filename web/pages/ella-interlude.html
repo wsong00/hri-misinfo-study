@@ -20,19 +20,29 @@
     </div>
 
     <h1 class="ella-title">Ella has some thoughts!</h1>
-    <p class="ella-sub">Please listen to what Ella has to say.<br>Take your time — there's no rush.</p>
 
-    <div class="ella-dots">
-      <div class="ella-dot"></div>
-      <div class="ella-dot"></div>
-      <div class="ella-dot"></div>
+    <!-- Step 1: Ready -->
+    <div id="step-ready">
+      <p class="ella-sub">When you're ready to hear Ella's thoughts, press the button below.</p>
+      <button class="btn btn-primary" id="ready-btn" onclick="onReady()" style="max-width:320px; margin:0 auto;">
+        I'm Ready
+      </button>
     </div>
 
-    <button class="btn btn-primary" onclick="window.location.href='ranking-post.html'" style="max-width:320px; margin:0 auto;">
-      Continue
-    </button>
+    <!-- Step 2: Ella speaking -->
+    <div id="step-speaking" style="display:none;">
+      <p class="ella-sub">Please listen to what Ella has to say.<br>Take your time — there's no rush.</p>
+      <div class="ella-dots">
+        <div class="ella-dot"></div>
+        <div class="ella-dot"></div>
+        <div class="ella-dot"></div>
+      </div>
+      <button class="btn btn-primary" onclick="window.location.href='ranking-post.html'" style="max-width:320px; margin:0 auto;">
+        Continue
+      </button>
+      <p class="experimenter-note">[Experimenter: click Continue once Ella has finished speaking]</p>
+    </div>
 
-    <p class="experimenter-note">[Experimenter: click Continue once Ella has finished speaking]</p>
   </div>
 </div>
 
@@ -40,27 +50,30 @@
 <script>
   requireSession('participantId', 'initialChoice');
 
-  const choice = Session.get('initialChoice'); 
-  console.log('Participant chose:', choice);
+  const choice = Session.get('initialChoice');
 
-  const ros = new ROSLIB.Ros({ url: 'ws://localhost:9090' });
+  function onReady() {
+    // Swap to speaking view
+    document.getElementById('step-ready').style.display = 'none';
+    document.getElementById('step-speaking').style.display = 'block';
 
-  ros.on('connection', () => {
-    console.log('Connected to ROS2, sending choice:', choice);
+    // Publish choice to ROS2 → triggers Ella's TTS
+    const ros = new ROSLIB.Ros({ url: 'ws://localhost:9090' });
 
-    const topic = new ROSLIB.Topic({
-      ros: ros,
-      name: '/participant_choice',
-      messageType: 'std_msgs/msg/String'
+    ros.on('connection', () => {
+      const topic = new ROSLIB.Topic({
+        ros: ros,
+        name: '/participant_choice',
+        messageType: 'std_msgs/msg/String'
+      });
+      topic.publish(new ROSLIB.Message({ data: choice }));
+      console.log('Choice published to /participant_choice:', choice);
     });
 
-    topic.publish(new ROSLIB.Message({ data: choice }));
-    console.log('Choice published to /participant_choice');
-  });
-
-  ros.on('error', (e) => {
-    console.error('ROS connection error:', e);
-  });
+    ros.on('error', (e) => {
+      console.error('ROS connection error:', e);
+    });
+  }
 </script>
 </body>
 </html>
